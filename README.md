@@ -1,142 +1,161 @@
 # Olist E-Commerce Analytics — dbt + Snowflake
 
-A modern data transformation and analytics project built using **Snowflake and dbt** on the Brazilian Olist e-commerce dataset.
+A production-style analytics engineering project built with **dbt and Snowflake**, using the Brazilian Olist E-Commerce dataset.
 
-The project demonstrates an end-to-end analytics engineering workflow: loading raw e-commerce data into Snowflake, modelling it through staging and intermediate layers, creating dimensional/fact models, and producing business-focused analytics models with dbt testing and documentation.
+The project demonstrates how raw e-commerce data can be transformed into a tested, analytics-ready data model using **layered dbt transformations, dimensional modelling, data quality tests, Snowflake, and GitHub Actions CI/CD**.
 
 ---
 
 ## Architecture
 
 ```text
-                         Olist E-Commerce Dataset
-                                   │
-                                   ▼
-                          ┌─────────────────┐
-                          │     Snowflake   │
-                          │       RAW       │
-                          └────────┬────────┘
-                                   │
-                                   ▼
-                          ┌─────────────────┐
-                          │   dbt Sources   │
-                          └────────┬────────┘
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │       STAGING            │
-                    │                          │
-                    │ stg_orders               │
-                    │ stg_customers            │
-                    │ stg_order_items           │
-                    │ stg_order_payments        │
-                    │ stg_order_reviews         │
-                    │ stg_products              │
-                    │ stg_sellers               │
-                    │ stg_product_category...   │
-                    └────────────┬─────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-                    │      INTERMEDIATE        │
-                    │                          │
-                    │ int_orders_enriched      │
-                    │ int_order_items_enriched │
-                    │ int_order_payments...    │
-                    │ int_order_reviews        │
-                    └────────────┬─────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-                    │          MARTS            │
-                    │                          │
-                    │ dim_customers            │
-                    │ dim_products             │
-                    │ dim_sellers              │
-                    │ fact_orders              │
-                    │ fact_order_items         │
-                    └────────────┬─────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-                    │       ANALYTICS           │
-                    │                          │
-                    │ sales_performance        │
-                    │ customer_performance     │
-                    │ product_performance      │
-                    │ delivery_performance     │
-                    │ review_performance       │
-                    └──────────────────────────┘
+                    ┌─────────────────────┐
+                    │   Olist Raw Data    │
+                    │      CSV / Data      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │      Snowflake      │
+                    │        RAW          │
+                    └──────────┬──────────┘
+                               │
+                               │ dbt source()
+                               ▼
+                    ┌─────────────────────┐
+                    │     STAGING         │
+                    │                     │
+                    │ • stg_orders        │
+                    │ • stg_customers     │
+                    │ • stg_order_items   │
+                    │ • stg_products      │
+                    │ • stg_sellers       │
+                    │ • stg_payments      │
+                    │ • stg_reviews       │
+                    └──────────┬──────────┘
+                               │
+                               │ dbt ref()
+                               ▼
+                    ┌─────────────────────┐
+                    │   INTERMEDIATE      │
+                    │                     │
+                    │ • orders_enriched   │
+                    │ • order_items       │
+                    │ • payments_agg      │
+                    │ • reviews           │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │       MARTS         │
+                    │                     │
+                    │ Dimensions          │
+                    │ • dim_customers     │
+                    │ • dim_products      │
+                    │ • dim_sellers       │
+                    │                     │
+                    │ Facts               │
+                    │ • fact_orders       │
+                    │ • fact_order_items  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │      ANALYTICS      │
+                    │                     │
+                    │ • sales_performance │
+                    │ • customer_perf.    │
+                    │ • product_perf.     │
+                    │ • delivery_perf.    │
+                    │ • review_perf.      │
+                    └─────────────────────┘
+
+                       GitHub Actions
+                              │
+                              ▼
+                    dbt debug → dbt build
+                    + automated tests
 ```
+
+---
+
+## Project Overview
+
+This project uses **dbt on Snowflake** to transform the Olist Brazilian E-Commerce dataset into a layered analytics model.
+
+The project focuses on practical analytics engineering patterns:
+
+* Source management
+* Staging transformations
+* Intermediate business logic
+* Dimensional modelling
+* Fact tables
+* Analytics marts
+* Data quality testing
+* Grain-aware modelling
+* Snowflake SQL
+* dbt dependency management
+* Git-based development
+* GitHub Actions CI/CD
+* Automated `dbt build` validation
+
+The goal is to demonstrate how a real-world analytics transformation project can be structured, tested and maintained rather than simply creating a collection of SQL queries.
 
 ---
 
 ## Project Objectives
 
-The main objectives are to:
+The project demonstrates how to:
 
-* Build a structured analytics data warehouse using Snowflake.
-* Use dbt to transform raw e-commerce data into analytics-ready models.
-* Demonstrate layered data modelling using **staging → intermediate → marts → analytics**.
-* Apply dimensional modelling principles.
-* Define and test model and column-level data quality rules.
-* Create reusable business metrics for sales, customers, products, delivery and reviews.
-* Document transformation logic and model relationships using dbt.
-* Provide a foundation for BI tools and further analytical exploration.
+1. Load raw e-commerce data into Snowflake.
+2. Define raw Snowflake tables as dbt sources.
+3. Build clean staging models.
+4. Apply business transformations in intermediate models.
+5. Create dimensional and fact models.
+6. Build analytics-ready datasets.
+7. Add automated data quality tests.
+8. Handle real-world data modelling challenges.
+9. Document modelling decisions.
+10. Run automated CI validation using GitHub Actions.
+11. Keep Snowflake credentials outside the repository.
 
 ---
 
 ## Technology Stack
 
-| Technology         | Purpose                                                   |
-| ------------------ | --------------------------------------------------------- |
-| **Snowflake**      | Cloud data warehouse                                      |
-| **dbt**            | SQL transformations, modelling, testing and documentation |
-| **SQL**            | Data transformation and analytical logic                  |
-| **Git / GitHub**   | Version control                                           |
-| **GitHub Actions** | Planned CI/CD automation                                  |
+| Technology         | Purpose                            |
+| ------------------ | ---------------------------------- |
+| **Snowflake**      | Cloud data warehouse               |
+| **dbt**            | Data transformation and modelling  |
+| **SQL**            | Transformation logic               |
+| **Git / GitHub**   | Version control                    |
+| **GitHub Actions** | CI/CD and automated dbt validation |
+| **Python / uv**    | Local development environment      |
 
 ---
 
 ## Dataset
 
-The project uses the **Brazilian Olist E-Commerce dataset**.
+The project uses the **Brazilian Olist E-Commerce dataset**, containing information about orders, customers, products, sellers, payments and reviews.
 
-The dataset contains information about:
-
-* Customers
-* Orders
-* Order items
-* Payments
-* Reviews
-* Products
-* Sellers
-* Product categories
-
-The original dataset contains approximately:
+The dataset contains approximately:
 
 * **99K orders**
 * **112K order items**
 * **96K unique customers**
-* Thousands of products and sellers
+* Thousands of products
+* Thousands of sellers
+* Multiple payment records per order
+* Customer reviews
+* Product category translations
 
-The dataset is particularly useful because it contains multiple related entities and realistic one-to-many relationships.
-
----
-
-# Data Model
-
-## 1. Raw Layer
-
-The raw data is loaded into Snowflake without applying business transformations.
-
-Schema:
+The raw data is stored in Snowflake under:
 
 ```text
 ECOMMERCE_DB.RAW
 ```
 
-Tables:
+### Raw Tables
 
 ```text
 CUSTOMERS
@@ -149,13 +168,38 @@ PRODUCT_CATEGORY_TRANSLATION
 SELLERS
 ```
 
-The raw layer acts as the source-of-truth ingestion layer.
+---
+
+# Data Model
+
+The dbt project follows a layered transformation architecture.
+
+```text
+RAW
+ │
+ ▼
+SOURCES
+ │
+ ▼
+STAGING
+ │
+ ▼
+INTERMEDIATE
+ │
+ ▼
+MARTS
+ │
+ ▼
+ANALYTICS
+```
+
+Each layer has a specific responsibility.
 
 ---
 
-## 2. Staging Layer
+## 1. Staging Layer
 
-The staging layer provides a clean interface over the raw source tables.
+The staging layer provides a clean interface over the raw Snowflake tables.
 
 Models:
 
@@ -166,78 +210,99 @@ stg_order_items
 stg_order_payments
 stg_order_reviews
 stg_products
-stg_product_category_translation
 stg_sellers
+stg_product_category_translation
 ```
 
-The staging layer focuses on:
+Typical staging responsibilities include:
 
 * Selecting required columns
-* Establishing consistent naming
-* Creating clean source interfaces
-* Defining source/model tests
+* Renaming fields where appropriate
+* Standardising data types
+* Preserving source information needed by downstream models
+* Defining model grain
+* Applying basic data quality tests
 
-Business logic is intentionally kept limited at this layer.
+The staging layer intentionally contains limited business logic.
 
 ---
 
-## 3. Intermediate Layer
+## 2. Intermediate Layer
 
-The intermediate layer contains reusable transformations and joins.
-
-Models:
-
-```text
-int_orders_enriched
-int_order_items_enriched
-int_order_payments_aggregated
-int_order_reviews
-```
-
-Examples:
+The intermediate layer contains reusable business transformations that are shared by downstream marts.
 
 ### `int_orders_enriched`
 
 Combines orders with customer information.
 
+Grain:
+
 ```text
-orders
-   │
-   └── customer_id
-          │
-          ▼
-      customers
+One row per order
 ```
+
+Validation:
+
+```text
+Total orders:           99,441
+Distinct orders:        99,441
+```
+
+---
 
 ### `int_order_items_enriched`
 
-Combines order items with product and seller information.
+Combines order items with:
+
+* Products
+* Sellers
+
+Grain:
 
 ```text
-order_items
-     │
-     ├── product_id ──► products
-     │
-     └── seller_id  ──► sellers
+(order_id, order_item_id)
 ```
+
+Validation:
+
+```text
+Total rows:                    112,650
+Distinct order/item pairs:    112,650
+```
+
+The model was specifically validated to ensure that joining products and sellers did not multiply order-item rows.
+
+---
 
 ### `int_order_payments_aggregated`
 
-Changes the payment grain from individual payment records to:
+Payments can contain multiple records for the same order.
 
-```text
-one row per order
+Instead of joining raw payment rows directly to orders, payments are aggregated first:
+
+```sql
+select
+    order_id,
+    count(*) as payment_count,
+    sum(payment_value) as total_payment_value,
+    max(payment_installments) as max_payment_installments
+from {{ ref('stg_order_payments') }}
+group by order_id
 ```
 
-and calculates:
+This produces:
 
-* Payment count
-* Total payment value
-* Maximum payment installments
+```text
+One row per order
+```
+
+and prevents payment joins from multiplying the order grain.
+
+---
 
 ### `int_order_reviews`
 
-Adds a business classification to review scores:
+Provides a reusable review model and categorises review scores:
 
 ```text
 1–2 → negative
@@ -245,54 +310,73 @@ Adds a business classification to review scores:
 4–5 → positive
 ```
 
+The source dataset contains duplicate `review_id` values, so `review_id` is intentionally **not treated as a globally unique key**.
+
+This is an example of allowing the source data's actual behaviour to influence the data model rather than blindly applying uniqueness assumptions.
+
 ---
 
-# 4. Marts Layer
+# 3. Marts Layer
 
-The marts layer contains business-oriented fact and dimension models.
+The marts layer contains analytics-ready dimensional and fact models.
 
 ## Dimensions
 
 ### `dim_customers`
 
-One row per `customer_unique_id`.
+Customer modelling uses:
 
-Provides:
+```text
+customer_unique_id
+```
 
-* Customer identifier
-* Location
-* Customer attributes
+as the business-level customer grain.
 
-The Olist dataset can contain multiple `customer_id` values for the same underlying customer, so `customer_unique_id` is used as the business-level customer identifier.
+The Olist dataset can contain multiple `customer_id` values associated with the same `customer_unique_id`.
+
+Therefore:
+
+```text
+customer_unique_id = business customer
+customer_id        = order-level/source customer identifier
+```
+
+The model contains approximately:
+
+```text
+96,096 customers
+```
+
+This prevents customer analytics from being incorrectly split across multiple source customer IDs.
 
 ---
 
 ### `dim_products`
 
-One row per product.
+Contains product attributes and translated product categories.
 
-Provides:
+The model uses the English category translation when available:
 
-* Product identifier
-* Product category
-* Product dimensions
-* Product weight
-* Product metadata
+```sql
+coalesce(
+    t.product_category_name_english,
+    p.product_category_name
+) as product_category
+```
 
-The Portuguese product category is translated to English where a translation is available.
+This provides a more analytics-friendly product category field while retaining the original category when a translation is unavailable.
 
 ---
 
 ### `dim_sellers`
 
-One row per seller.
+Contains seller-level information.
 
-Provides:
+Grain:
 
-* Seller identifier
-* Location
-* State
-* ZIP code
+```text
+One row per seller
+```
 
 ---
 
@@ -300,42 +384,40 @@ Provides:
 
 ### `fact_orders`
 
-One row per order.
+Grain:
 
-Contains:
+```text
+One row per order
+```
+
+The model combines:
 
 * Order information
 * Customer information
-* Payment metrics
+* Aggregated payment information
+* Delivery dates
 * Delivery status
-* On-time delivery indicator
 
-The model also derives:
-
-```text
-delivered_on_time
-```
-
-based on actual versus estimated delivery dates.
+It also derives whether an order was delivered on time using actual and estimated delivery dates.
 
 ---
 
 ### `fact_order_items`
 
-One row per:
+Grain:
 
 ```text
 (order_id, order_item_id)
 ```
 
-Contains:
+The model contains:
 
 * Product
 * Seller
 * Price
 * Freight
 * Product attributes
-* Seller location
+* Seller attributes
 
 It also calculates:
 
@@ -343,43 +425,40 @@ It also calculates:
 total_item_value = price + freight_value
 ```
 
-The composite grain is intentional because `order_item_id` is not globally unique across all orders.
+The composite grain is important because `order_item_id` is only unique within an order and should not be treated as globally unique.
 
 ---
 
-# 5. Analytics Layer
+# 4. Analytics Layer
 
-The analytics layer contains business-facing models designed for reporting and analysis.
+The analytics layer contains business-focused models designed for downstream analysis and BI.
 
 ## `sales_performance`
 
-Monthly sales metrics including:
+Provides sales trends over time.
 
+Example dimensions and measures include:
+
+* Order month
 * Order count
-* Unique customers
-* Total revenue
+* Revenue
 * Average order value
-* Delivered revenue
+* Payment metrics
 
-Example questions:
+The monthly grain is represented as a `DATE` rather than a timestamp:
 
-```text
-How is monthly revenue changing?
-
-How many customers are placing orders?
-
-What is the average order value?
-
-How much revenue comes from delivered orders?
+```sql
+cast(
+    date_trunc('month', order_purchase_timestamp)
+    as date
+) as order_month
 ```
 
 ---
 
 ## `customer_performance`
 
-One row per customer.
-
-Metrics include:
+Provides customer-level metrics including:
 
 * Order count
 * Total revenue
@@ -389,150 +468,107 @@ Metrics include:
 * Delivered order count
 * Delivered revenue
 
-This provides a foundation for customer segmentation and lifetime-value analysis.
+Missing payment values are handled explicitly using `COALESCE` where appropriate.
+
+For example:
+
+```sql
+sum(coalesce(total_payment_value, 0)) as total_revenue
+```
+
+while `average_order_value` intentionally preserves the original `AVG()` semantics rather than treating missing payments as zero.
 
 ---
 
 ## `product_performance`
 
-One row per product.
+Provides product-level performance metrics such as:
 
-Metrics include:
-
-* Number of items sold
-* Number of orders
-* Number of sellers
-* Product revenue
-* Freight value
-* Total sales value
-* Average item price
-
-This can be used to identify top-selling and high-value products.
+* Orders
+* Units sold
+* Revenue
+* Average selling price
+* Freight
+* Product category performance
 
 ---
 
 ## `delivery_performance`
 
-Monthly delivery performance metrics including:
+Provides delivery analysis including:
 
-* Total orders
-* Delivered orders
-* On-time orders
-* Late orders
-* Average delivery time
-* Delivery variance against estimate
-
-Delivery variance is calculated as:
-
-```text
-Actual delivery date - Estimated delivery date
-```
-
-Therefore:
-
-```text
--3 → delivered 3 days early
- 0 → delivered on estimated date
-+4 → delivered 4 days late
-```
+* Estimated delivery dates
+* Actual delivery dates
+* Delivery duration
+* On-time delivery performance
+* Late delivery patterns
 
 ---
 
 ## `review_performance`
 
-Monthly customer review metrics including:
+Provides customer review analysis including:
 
-* Review count
-* Average review score
-* Positive reviews
-* Neutral reviews
-* Negative reviews
-* Reviews containing comments
-
-Review classification:
-
-```text
-1–2 → Negative
-3   → Neutral
-4–5 → Positive
-```
+* Review scores
+* Positive / neutral / negative classification
+* Review volumes
+* Review performance by product/category/order
 
 ---
 
 # Data Quality & Testing
 
-dbt tests are used to validate important assumptions about the data.
+Data quality is implemented using dbt tests.
 
 Examples include:
 
-```yaml
-data_tests:
-  - unique
-  - not_null
+* `not_null`
+* `unique`
+* Relationship tests
+* Grain-aware validation
+* Business-rule validation
+
+Examples of tested keys include:
+
+```text
+stg_orders.order_id
+stg_customers.customer_id
 ```
 
-Tests are applied according to the grain of each model.
+Composite grains are tested according to their actual business meaning.
 
 For example:
 
-### Orders
-
 ```text
-order_id → unique
-```
-
-### Customers
-
-```text
-customer_unique_id → unique
-```
-
-### Products
-
-```text
-product_id → unique
-```
-
-### Order Items
-
-The grain is:
-
-```text
+fact_order_items
+----------------
 (order_id, order_item_id)
 ```
 
-Therefore a global uniqueness test is not applied to `order_item_id`.
+rather than incorrectly assuming:
 
-This is intentional and reflects the actual structure of the source data.
+```text
+order_item_id
+```
+
+is globally unique.
+
+This is particularly important because source datasets frequently contain assumptions that do not hold when inspected at scale.
 
 ---
 
-# Important Data Modelling Decisions
+# Important Modelling Decisions
 
 ## Customer Grain
 
-The source contains both:
+The Olist dataset contains both:
 
 ```text
 customer_id
 customer_unique_id
 ```
 
-`customer_id` identifies the customer record associated with an order, while `customer_unique_id` represents the underlying customer across potentially multiple orders.
-
-Therefore:
-
-```text
-dim_customers
-```
-
-uses:
-
-```text
-customer_unique_id
-```
-
-as its grain.
+`customer_unique_id` is used as the business-level customer grain because a single customer can have multiple source-level customer IDs.
 
 ---
 
@@ -544,11 +580,32 @@ Order items use:
 (order_id, order_item_id)
 ```
 
-as their grain.
+as their composite grain.
 
-`order_item_id` should not be treated as globally unique.
+`order_item_id` alone is not treated as globally unique.
 
-This prevents incorrect uniqueness assumptions and preserves the actual source grain.
+---
+
+## Payment Aggregation
+
+Orders can have multiple payment records.
+
+Therefore, payments are aggregated before joining to the order fact.
+
+```text
+Raw payments
+     │
+     ▼
+Aggregate by order_id
+     │
+     ▼
+One payment summary per order
+     │
+     ▼
+fact_orders
+```
+
+This prevents accidental row multiplication and incorrect revenue calculations.
 
 ---
 
@@ -556,404 +613,494 @@ This prevents incorrect uniqueness assumptions and preserves the actual source g
 
 The source contains duplicate `review_id` values.
 
-Therefore the project does **not** enforce:
-
-```text
-review_id unique
-```
-
-at the staging/intermediate level.
-
-Instead, the model reflects the source data rather than imposing an incorrect uniqueness assumption.
+Instead of imposing an incorrect uniqueness constraint, the model preserves the source behaviour and avoids using `review_id` as a unique key.
 
 ---
 
-## Payment Aggregation
+## Missing Payment Values
 
-Orders can contain multiple payment records.
+Revenue calculations explicitly handle missing payment values using `COALESCE` where zero is the appropriate business interpretation.
 
-The intermediate payment model aggregates payments to:
-
-```text
-one row per order
-```
-
-before joining them to `fact_orders`.
-
-This prevents payment records from multiplying order-level rows.
+At the same time, averages are not automatically converted to zero because doing so would change the meaning of the metric.
 
 ---
 
-# Example Business Questions
+## Delivery Performance
 
-The resulting models can answer questions such as:
+Delivery performance is derived from actual and estimated delivery timestamps rather than simply relying on order status.
 
-### Sales
+This allows the model to answer questions such as:
 
-* What is monthly revenue?
-* What is the average order value?
-* How many unique customers purchase each month?
-* What percentage of revenue comes from delivered orders?
+```text
+Was the order delivered on time?
+```
+
+---
+
+# Data Quality Validation
+
+The project validates important assumptions throughout the transformation pipeline.
+
+Examples include:
+
+### Orders
+
+```text
+99,441 total orders
+99,441 distinct orders
+```
+
+### Order Items
+
+```text
+112,650 total order-item records
+112,650 distinct (order_id, order_item_id) combinations
+```
 
 ### Customers
 
-* Which customers generate the most revenue?
-* How frequently do customers reorder?
-* What is the average customer order value?
-* Which customers have been active most recently?
+```text
+96,096 business-level customers
+96,096 distinct customer_unique_id values
+```
 
-### Products
+### Join Validation
 
-* Which products generate the most revenue?
-* Which products have the highest sales volume?
-* Which products have high freight costs?
-* Which products are sold by multiple sellers?
+The order-item enrichment was validated to ensure:
 
-### Delivery
+```text
+All product matches found
+All seller matches found
+No unexpected join multiplication
+```
 
-* What percentage of orders are delivered on time?
-* Which months had the highest late-delivery rate?
-* What is the average delivery time?
-* How far ahead or behind estimates are actual deliveries?
+The full dbt project successfully passes:
 
-### Reviews
+```bash
+dbt build
+```
 
-* What is the average customer review score?
-* How many reviews are negative?
-* Are negative reviews increasing?
-* How frequently do customers leave written comments?
+including the associated dbt tests.
 
 ---
 
-# Running the Project
+# CI/CD with GitHub Actions
+
+The project includes automated CI validation using **GitHub Actions**.
+
+The workflow runs automatically on:
+
+```text
+push → main
+pull request → main
+```
+
+The workflow performs:
+
+```text
+Checkout repository
+        │
+        ▼
+Set up Python
+        │
+        ▼
+Install dbt-snowflake
+        │
+        ▼
+Create temporary dbt profile
+        │
+        ▼
+dbt debug
+        │
+        ▼
+dbt build
+        │
+        ▼
+dbt models + tests
+```
+
+### Credential Security
+
+Snowflake credentials are **not stored in the repository**.
+
+GitHub Actions receives:
+
+* Snowflake account
+* Snowflake user
+* Snowflake role
+* Snowflake database
+* Snowflake warehouse
+* Snowflake schema
+
+through GitHub repository variables.
+
+The Snowflake password is stored as a GitHub Actions secret.
+
+The workflow creates a temporary `profiles.yml` on the GitHub Actions runner.
+
+The local dbt profile remains outside the repository:
+
+```text
+~/.dbt/profiles.yml
+```
+
+This keeps development credentials and production/CI credentials separate.
+
+---
+
+# Running the Project Locally
 
 ## Prerequisites
 
-You need:
+You will need:
 
-* Snowflake account
 * Python
 * dbt
+* dbt-snowflake
+* Snowflake account
+* Snowflake database and warehouse
 * Git
 
-Install the Snowflake dbt adapter:
+---
+
+## Clone the Repository
 
 ```bash
-pip install dbt-snowflake
-```
+git clone https://github.com/pavani64/ecommerce-dbt-snowflake.git
 
-> The project uses a Snowflake connection configured through `~/.dbt/profiles.yml`.
+cd ecommerce-dbt-snowflake
+```
 
 ---
 
 ## Configure Snowflake Credentials
 
-The password is supplied through an environment variable rather than being stored directly in the dbt profile.
+The dbt profile is intentionally stored outside the repository:
 
-Example:
+```text
+~/.dbt/profiles.yml
+```
+
+Example structure:
+
+```yaml
+olist_analytics:
+  target: dev
+
+  outputs:
+    dev:
+      type: snowflake
+      account: <account>
+      user: <username>
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: <role>
+      database: ECOMMERCE_DB
+      warehouse: <warehouse>
+      schema: <schema>
+      threads: 4
+```
+
+Set the password through an environment variable:
 
 ```bash
 export SNOWFLAKE_PASSWORD="your-password"
 ```
 
-The profile uses:
-
-```yaml
-password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
-```
-
-This keeps credentials out of source control.
-
----
-
-# Validate the dbt Connection
-
-From the project directory:
-
-```bash
-dbt debug
-```
-
-A successful result should show:
-
-```text
-Connection test: [OK connection ok]
-```
+Do not commit credentials to Git.
 
 ---
 
 # Install Dependencies
 
-If the project contains a `packages.yml`:
+If using the Python environment included with the project:
 
 ```bash
-dbt deps
+uv sync
 ```
+
+Alternatively, install dbt-snowflake in another Python environment:
+
+```bash
+pip install dbt-snowflake
+```
+
+---
+
+# Validate the dbt Connection
+
+From the dbt project directory:
+
+```bash
+cd olist_analytics
+
+dbt debug
+```
+
+A successful connection should report that the dbt configuration and Snowflake connection are valid.
 
 ---
 
 # Run the Project
 
-Run all models:
-
-```bash
-dbt run
-```
-
-Run all tests:
-
-```bash
-dbt test
-```
-
-Or run the complete build:
+Build all models and execute tests:
 
 ```bash
 dbt build
 ```
 
-`dbt build` is particularly useful because it executes models and their associated tests according to the dependency graph.
+This executes the dependency graph in the correct order and runs applicable tests.
 
 ---
 
-# Run Individual Layers
+# Run Specific Models
 
-### Staging
+Build a single model:
 
 ```bash
-dbt run --select staging
+dbt build --select customer_performance
 ```
 
-### Intermediate
+Build a model and its upstream dependencies:
 
 ```bash
-dbt run --select intermediate
+dbt build --select +customer_performance
 ```
 
-### Marts
+Build a complete layer:
 
 ```bash
-dbt run --select marts
+dbt build --select staging
 ```
 
-### Analytics
+or select models by path:
 
 ```bash
-dbt run --select analytics
-```
-
-You can also run an individual model:
-
-```bash
-dbt run --select sales_performance
+dbt build --select path:models/marts
 ```
 
 ---
 
-# Testing
+# Generate dbt Documentation
 
-Run tests for a specific model:
-
-```bash
-dbt test --select customer_performance
-```
-
-Run all tests:
-
-```bash
-dbt test
-```
-
-For the full project:
-
-```bash
-dbt build
-```
-
----
-
-# Documentation
-
-Generate dbt documentation:
+Generate the dbt documentation site:
 
 ```bash
 dbt docs generate
 ```
 
-Start the documentation server:
+Start the local documentation server:
 
 ```bash
 dbt docs serve
 ```
 
-The generated documentation provides:
+The documentation provides:
 
 * Model descriptions
-* Column descriptions
-* Data tests
+* Column information
+* Tests
+* Sources
 * Model dependencies
-* Source definitions
-* DAG lineage
+* Lineage graph
 
-The lineage graph makes the transformation flow visible:
-
-```text
-RAW
- ↓
-Sources
- ↓
-Staging
- ↓
-Intermediate
- ↓
-Marts
- ↓
-Analytics
-```
+The generated documentation is intended for local development and exploration unless separately deployed.
 
 ---
 
 # Project Structure
 
 ```text
-olist_analytics/
+ecommerce-dbt-snowflake/
 │
-├── dbt_project.yml
+├── .github/
+│   └── workflows/
+│       └── dbt.yml
 │
-├── models/
+├── olist_analytics/
+│   ├── models/
+│   │   ├── staging/
+│   │   │   ├── sources.yml
+│   │   │   ├── stg_customers.sql
+│   │   │   ├── stg_orders.sql
+│   │   │   ├── stg_order_items.sql
+│   │   │   ├── stg_order_payments.sql
+│   │   │   ├── stg_order_reviews.sql
+│   │   │   ├── stg_products.sql
+│   │   │   ├── stg_sellers.sql
+│   │   │   └── stg_product_category_translation.sql
+│   │   │
+│   │   ├── intermediate/
+│   │   │   ├── int_orders_enriched.sql
+│   │   │   ├── int_order_items_enriched.sql
+│   │   │   ├── int_order_payments_aggregated.sql
+│   │   │   └── int_order_reviews.sql
+│   │   │
+│   │   ├── marts/
+│   │   │   ├── dim_customers.sql
+│   │   │   ├── dim_products.sql
+│   │   │   ├── dim_sellers.sql
+│   │   │   ├── fact_orders.sql
+│   │   │   └── fact_order_items.sql
+│   │   │
+│   │   └── analytics/
+│   │       ├── sales_performance.sql
+│   │       ├── customer_performance.sql
+│   │       ├── product_performance.sql
+│   │       ├── delivery_performance.sql
+│   │       └── review_performance.sql
 │   │
-│   ├── staging/
-│   │   ├── sources.yml
-│   │   ├── stg_customers.sql
-│   │   ├── stg_orders.sql
-│   │   ├── stg_order_items.sql
-│   │   ├── stg_order_payments.sql
-│   │   ├── stg_order_reviews.sql
-│   │   ├── stg_products.sql
-│   │   ├── stg_sellers.sql
-│   │   └── stg_product_category_translation.sql
-│   │
-│   ├── intermediate/
-│   │   ├── int_orders_enriched.sql
-│   │   ├── int_order_items_enriched.sql
-│   │   ├── int_order_payments_aggregated.sql
-│   │   └── int_order_reviews.sql
-│   │
-│   ├── marts/
-│   │   ├── dim_customers.sql
-│   │   ├── dim_products.sql
-│   │   ├── dim_sellers.sql
-│   │   ├── fact_orders.sql
-│   │   └── fact_order_items.sql
-│   │
-│   └── analytics/
-│       ├── sales_performance.sql
-│       ├── customer_performance.sql
-│       ├── product_performance.sql
-│       ├── delivery_performance.sql
-│       └── review_performance.sql
+│   ├── dbt_project.yml
+│   └── ...
 │
-├── analyses/
-├── macros/
-├── seeds/
-├── snapshots/
-└── tests/
+├── scripts/
+│   └── snowflake/
+│
+├── .gitignore
+├── pyproject.toml
+├── uv.lock
+└── README.md
 ```
+
+---
+
+# Business Questions
+
+The analytics models can be used to answer questions such as:
+
+### Sales
+
+* How is revenue changing over time?
+* What are the highest-revenue periods?
+* What is the average order value?
+* How many orders are being placed?
+
+### Customers
+
+* Who are the highest-value customers?
+* How frequently do customers purchase?
+* What is the customer's first and most recent order?
+* How much revenue comes from delivered orders?
+
+### Products
+
+* Which products generate the most revenue?
+* Which categories sell the most units?
+* Which products have high freight costs?
+* Which product categories perform best?
+
+### Delivery
+
+* What percentage of orders arrive on time?
+* Which periods have the highest delivery delays?
+* Are certain products or sellers associated with delivery issues?
+
+### Reviews
+
+* Which products receive the highest ratings?
+* What proportion of reviews are positive?
+* Which categories have weaker customer satisfaction?
+
+---
+
+# Skills Demonstrated
+
+This project demonstrates practical experience with:
+
+### Snowflake
+
+* Database and schema organisation
+* Snowflake SQL
+* Analytical transformations
+* Warehouse-based analytics
+
+### dbt
+
+* Sources
+* `ref()` dependencies
+* Staging models
+* Intermediate models
+* Dimensional modelling
+* Fact modelling
+* Analytics marts
+* Data quality tests
+* Model selection
+* Documentation
+* Dependency graphs
+
+### Data Modelling
+
+* Defining table grain
+* Fact and dimension design
+* Composite keys
+* Business keys
+* Handling source-system identifiers
+* Preventing join multiplication
+* Aggregation before joins
+
+### Data Quality
+
+* Not-null validation
+* Uniqueness testing
+* Relationship validation
+* Grain-aware testing
+* Business-rule validation
+* Handling missing values
+
+### Engineering Practices
+
+* Git
+* GitHub
+* CI/CD
+* GitHub Actions
+* Secure credential management
+* Reproducible dbt builds
 
 ---
 
 # Future Enhancements
 
-The project is designed to be extended with additional production-style capabilities.
+Potential future improvements include:
 
-Planned enhancements include:
+* Incremental dbt models
+* dbt source freshness checks
+* Additional generic and singular tests
+* Customer segmentation
+* RFM analysis
+* Customer lifetime value (CLV)
+* Product category analysis
+* BI dashboard
+* Snowflake query-performance optimisation
+* Snowflake warehouse/cost optimisation
+* Additional dbt documentation and lineage visualisation
 
-* [ ] Incremental dbt model
-* [ ] Additional generic and singular dbt tests
-* [ ] dbt source freshness checks
-* [ ] GitHub Actions CI/CD
-* [ ] Automated `dbt build` validation
-* [ ] Additional customer segmentation
-* [ ] RFM analysis
-* [ ] Customer lifetime value analysis
-* [ ] Product category performance analysis
-* [ ] BI dashboard integration
-* [ ] Snowflake cost/performance optimisation
-
----
-
-# Key Skills Demonstrated
-
-This project demonstrates practical experience with:
-
-**Data Engineering**
-
-* Cloud data warehousing
-* Snowflake
-* SQL
-* Relational data modelling
-* Fact and dimension modelling
-* Data quality
-
-**Analytics Engineering**
-
-* dbt
-* dbt sources
-* dbt models
-* `ref()` and dependency management
-* Model layering
-* Data tests
-* Documentation
-* DAG-based transformations
-
-**Data Modelling**
-
-* Dimensional modelling
-* Grain definition
-* One-to-many relationships
-* Aggregation
-* Slowly evolving customer identity concepts
-* Business metric modelling
-
-**Engineering Practices**
-
-* Git
-* Environment-based credentials
-* Reproducible transformations
-* CI/CD
-* Automated testing
+The project intentionally focuses on **dbt + Snowflake analytics engineering** rather than introducing additional orchestration or infrastructure tools that are not required for the use case.
 
 ---
 
-# Design Philosophy
+# Key Takeaways
 
-The project intentionally separates transformations into layers rather than creating a single collection of large SQL queries.
+The main focus of this project is not simply transforming CSV data into tables.
+
+It demonstrates the reasoning required to build a reliable analytics model:
 
 ```text
-Staging
-  ↓
-Clean source representations
-
-Intermediate
-  ↓
-Reusable joins and transformations
-
-Marts
-  ↓
-Business entities and facts
-
-Analytics
-  ↓
-Business-facing metrics
+Understand source data
+        ↓
+Define business grain
+        ↓
+Build clean staging models
+        ↓
+Apply reusable transformations
+        ↓
+Prevent join multiplication
+        ↓
+Create facts and dimensions
+        ↓
+Build business-facing analytics
+        ↓
+Test assumptions
+        ↓
+Automate validation with CI/CD
 ```
 
-This approach improves:
-
-* Maintainability
-* Reusability
-* Testability
-* Lineage
-* Debuggability
-* Collaboration
-
-The goal is not simply to transform the Olist dataset, but to demonstrate how a modern analytics engineering project can be structured for maintainability and future growth.
+The resulting project provides a practical example of building a **tested, maintainable Snowflake + dbt analytics platform using modern analytics engineering practices**.
