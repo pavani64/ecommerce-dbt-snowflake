@@ -3,7 +3,7 @@ select
 
     count(*) as order_count,
 
-    sum(total_payment_value) as total_revenue,
+    sum(coalesce(total_payment_value, 0)) as total_revenue,
 
     avg(total_payment_value) as average_order_value,
 
@@ -21,7 +21,7 @@ select
     sum(
         case
             when order_status = 'delivered'
-            then total_payment_value
+            then coalesce(total_payment_value, 0)
             else 0
         end
     ) as delivered_revenue
