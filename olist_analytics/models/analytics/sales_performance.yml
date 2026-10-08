@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: sales_performance
+    description: "Monthly sales performance metrics derived from the order fact table."
+
+    columns:
+      - name: order_month
+        description: "Month in which the order was placed."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_count
+        description: "Number of orders placed during the month."
+        data_tests:
+          - not_null
+
+      - name: unique_customers
+        description: "Number of unique customers placing orders during the month."
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        description: "Total payment value for orders placed during the month."
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: "Average payment value per order."
+
+      - name: delivered_revenue
+        description: "Revenue associated with orders that were delivered."

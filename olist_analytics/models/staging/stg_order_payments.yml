@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: stg_order_payments
+    description: "Staging model for Olist order payment transactions."
+
+    columns:
+      - name: order_id
+        description: "Identifier of the order."
+        data_tests:
+          - not_null
+
+      - name: payment_sequential
+        description: "Sequence number of the payment within an order."
+        data_tests:
+          - not_null
+
+      - name: payment_type
+        description: "Payment method used for the order."
+        data_tests:
+          - not_null
+
+      - name: payment_installments
+        description: "Number of installments used for the payment."
+        data_tests:
+          - not_null
+
+      - name: payment_value
+        description: "Monetary value of the payment."
+        data_tests:
+          - not_null

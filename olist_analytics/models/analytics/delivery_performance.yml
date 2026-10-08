@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: delivery_performance
+    description: "Monthly delivery performance metrics comparing actual and estimated delivery dates."
+
+    columns:
+      - name: order_month
+        description: "Month in which the orders were placed."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_count
+        description: "Total number of orders placed during the month."
+        data_tests:
+          - not_null
+
+      - name: delivered_order_count
+        description: "Number of orders successfully delivered."
+        data_tests:
+          - not_null
+
+      - name: on_time_order_count
+        description: "Number of delivered orders delivered on or before the estimated delivery date."
+        data_tests:
+          - not_null
+
+      - name: late_order_count
+        description: "Number of delivered orders delivered after the estimated delivery date."
+        data_tests:
+          - not_null
+
+      - name: average_delivery_days
+        description: "Average number of days between order placement and customer delivery."
+
+      - name: average_delivery_variance_days
+        description: "Average difference in days between actual and estimated delivery. Negative values indicate early delivery."

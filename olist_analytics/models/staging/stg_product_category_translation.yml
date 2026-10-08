@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_product_category_translation
+    description: "Staging model for translating Olist product categories from Portuguese to English."
+
+    columns:
+      - name: product_category_name
+        description: "Original product category name in Portuguese."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: product_category_name_english
+        description: "English translation of the product category name."
+        data_tests:
+          - not_null

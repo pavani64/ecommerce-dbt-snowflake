@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: review_performance
+    description: "Monthly customer review and satisfaction metrics."
+
+    columns:
+      - name: review_month
+        description: "Month in which the review was created."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: review_count
+        description: "Number of reviews created during the month."
+        data_tests:
+          - not_null
+
+      - name: average_review_score
+        description: "Average customer review score from 1 to 5."
+        data_tests:
+          - not_null
+
+      - name: positive_review_count
+        description: "Number of reviews classified as positive."
+
+      - name: neutral_review_count
+        description: "Number of reviews classified as neutral."
+
+      - name: negative_review_count
+        description: "Number of reviews classified as negative."
+
+      - name: reviews_with_comments
+        description: "Number of reviews containing a customer comment."

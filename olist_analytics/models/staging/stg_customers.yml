@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Staging model for Olist customers."
+
+    columns:
+      - name: customer_id
+        description: "Unique identifier for a customer."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_unique_id
+        description: "Unique identifier representing the customer."
+        data_tests:
+          - not_null
+
+      - name: customer_city
+        description: "City where the customer is located."
+        data_tests:
+          - not_null
+      
+      - name: customer_state
+        description: "Brazilian state where the customer is located."
+        data_tests:
+          - not_null

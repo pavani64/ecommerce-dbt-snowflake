@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: product_performance
+    description: "Product-level sales and order performance metrics."
+
+    columns:
+      - name: product_id
+        description: "Unique identifier of the product."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: product_category_name
+        description: "Product category associated with the product."
+
+      - name: item_count
+        description: "Number of order items containing the product."
+        data_tests:
+          - not_null
+
+      - name: order_count
+        description: "Number of distinct orders containing the product."
+        data_tests:
+          - not_null
+
+      - name: seller_count
+        description: "Number of distinct sellers selling the product."
+        data_tests:
+          - not_null
+
+      - name: product_revenue
+        description: "Total product price across all order items."
+        data_tests:
+          - not_null
+
+      - name: total_freight
+        description: "Total freight value associated with the product."
+        data_tests:
+          - not_null
+
+      - name: total_sales_value
+        description: "Product revenue plus freight value."
+        data_tests:
+          - not_null
+
+      - name: average_item_price
+        description: "Average product price across order items."
+
+      - name: average_freight_value
+        description: "Average freight value per order item."

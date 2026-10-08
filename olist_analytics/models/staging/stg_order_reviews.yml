@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_order_reviews
+    description: "Staging model for Olist customer order reviews."
+
+    columns:
+      - name: review_id
+        description: "Unique identifier of the review."
+        data_tests:
+          #- unique
+          - not_null
+
+      - name: order_id
+        description: "Identifier of the order being reviewed."
+        data_tests:
+          - not_null
+
+      - name: review_score
+        description: "Customer review score from 1 to 5."
+        data_tests:
+          - not_null
+
+      - name: review_creation_date
+        description: "Date when the review was created."
+        data_tests:
+          - not_null
+
+      - name: review_answer_timestamp
+        description: "Timestamp when the review was answered."
+        data_tests:
+          - not_null

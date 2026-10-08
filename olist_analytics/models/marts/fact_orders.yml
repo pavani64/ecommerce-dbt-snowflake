@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: fact_orders
+    description: "Order-level fact table containing order lifecycle and aggregated payment information."
+
+    columns:
+      - name: order_id
+        description: "Unique identifier of the order."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Identifier of the customer record associated with the order."
+        data_tests:
+          - not_null
+
+      - name: customer_unique_id
+        description: "Unique identifier representing the actual customer."
+        data_tests:
+          - not_null
+
+      - name: order_status
+        description: "Current status of the order."
+        data_tests:
+          - not_null
+
+      - name: order_purchase_timestamp
+        description: "Timestamp when the order was placed."
+        data_tests:
+          - not_null
+
+      - name: payment_count
+        description: "Number of payment records associated with the order."
+
+      - name: total_payment_value
+        description: "Total value paid for the order."
+
+      - name: max_payment_installments
+        description: "Maximum number of installments associated with the order."
+
+      - name: delivered_on_time
+        description: "Indicates whether the order was delivered on or before the estimated delivery date."

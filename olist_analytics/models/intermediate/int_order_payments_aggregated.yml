@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: int_order_payments_aggregated
+    description: "Order-level payment summary aggregated from individual payment records."
+
+    columns:
+      - name: order_id
+        description: "Identifier of the order."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: payment_count
+        description: "Number of payment records associated with the order."
+        data_tests:
+          - not_null
+
+      - name: total_payment_value
+        description: "Total payment value across all payment records for the order."
+        data_tests:
+          - not_null
+
+      - name: max_payment_installments
+        description: "Maximum number of installments recorded for the order."

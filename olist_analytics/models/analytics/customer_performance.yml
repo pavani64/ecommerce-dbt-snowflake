@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: customer_performance
+    description: "Customer-level sales and order performance metrics."
+
+    columns:
+      - name: customer_unique_id
+        description: "Persistent customer identifier across orders."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_count
+        description: "Total number of orders placed by the customer."
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        description: "Total payment value across the customer's orders."
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: "Average payment value per order."
+
+      - name: first_order_date
+        description: "Timestamp of the customer's first order."
+        data_tests:
+          - not_null
+
+      - name: last_order_date
+        description: "Timestamp of the customer's most recent order."
+        data_tests:
+          - not_null
+
+      - name: delivered_order_count
+        description: "Number of orders delivered to the customer."
+        data_tests:
+          - not_null
+
+      - name: delivered_revenue
+        description: "Revenue associated with delivered orders."
+        data_tests:
+          - not_null

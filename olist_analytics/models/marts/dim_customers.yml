@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension containing one record per unique Olist customer."
+
+    columns:
+      - name: customer_unique_id
+        description: "Unique identifier representing the actual customer."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Representative customer record identifier."
+
+      - name: customer_zip_code_prefix
+        description: "Customer ZIP code prefix."
+
+      - name: customer_city
+        description: "Customer city."
+
+      - name: customer_state
+        description: "Customer Brazilian state."
